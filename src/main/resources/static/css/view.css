@@ -1,0 +1,21 @@
+.title {
+    display: inline;
+    padding-left: 10%;
+}
+
+.title-bar {
+    margin-bottom: 10px;
+}
+
+.watchlist {
+    padding-top: 10px;
+}
+
+.watchlist-button {
+    top: .6em;
+}
+
+.rate {
+    color: #deb316;
+    font-size: 2em;
+}

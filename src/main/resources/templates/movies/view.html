@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/app}">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="~{layouts/app :: title (${movie.getTitle()})}"></title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/view.css}">
+</head>
+<body style="background-color: #f2f2f2">
+<div layout:fragment="content">
+    <th:block th:replace="layouts/app :: app-navbar ('true')"></th:block>
+    <div class="container" style="background-color: white; padding-top: 10px">
+        <div class="row" th:object="${movie}">
+            <div class="col-lg-8">
+                <div class="title-bar">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="title-wrapper">
+                                <div class="watchlist">
+                                    <svg width="24px" height="34px" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg"
+                                         role="presentation">
+                                        <polygon fill="#000000" points="24 0 0 0 0 32 12.2436611 26.2926049 24 31.7728343"></polygon>
+                                        <polygon points="24 0 0 0 0 32 12.2436611 26.2926049 24 31.7728343"></polygon>
+                                        <polygon
+                                                points="24 31.7728343 24 33.7728343 12.2436611 28.2926049 0 34 0 32 12.2436611 26.2926049"></polygon>
+                                    </svg>
+                                    <div class="watchlist-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="currentColor"
+                                             role="presentation">
+                                            <path fill="none" d="M0 0h24v24H0V0z"></path>
+                                            <path d="M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h1 class="title" th:inline="text">
+                                    [[${movie.getTitle()}]]
+                                    <span>
+                                    (<a href="2019">[[*{year}]]</a>)
+                                    </span>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="vl" style="border-left: 1px solid gray;"></div>
+                        <div class="col-lg-2" th:inline="text">
+                            <div>
+                                <strong class="rate">[[*{rate}]]</strong>
+                                <span>/</span>
+                                <span>10</span>
+                            </div>
+                            <a th:href="@{/movies/{id}/ratings(id=*{id})}">[[*{numberVotes}]]</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slate-wrapper">
+                    <div class="row">
+                        <div class="col-lg-4 p-0">
+                            <img width="100%"
+                                 th:src="*{thumbnail}"
+                                 alt="">
+                        </div>
+                        <div class="col-lg-8 p-0">
+                            <iframe width="100%" height="100%" th:src="*{trailer}"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script>
+    </script>
+</th:block>
+</body>
+</html>

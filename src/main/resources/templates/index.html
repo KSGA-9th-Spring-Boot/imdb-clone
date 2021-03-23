@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/app}">
+<head>
+    <title th:replace="~{layouts/app :: title ('IMDB')}"></title>
+
+    <link rel="stylesheet" href="" th:href="@{~/css/owl.carousel.css}">
+    <link rel="stylesheet" href="" th:href="@{~/css/owl.theme.css}">
+    <link rel="stylesheet" href="" th:href="@{~/css/owl.transition.css}">
+
+    <link rel="stylesheet" href="" th:href="@{~/css/index.css}">
+    <link rel="stylesheet" href="" th:href="@{~/css/rating-star.css}">
+</head>
+<body>
+<div layout:fragment="content">
+    <nav th:replace="layouts/app :: app-navbar ('true')"></nav>
+    <br>
+    <div class="container">
+        <div class="owl-carousel owl-theme">
+            <div class="item card" style="width: 185px;" th:each="movie : ${movies}" th:object="${movie}">
+                <div class="watchlist">
+                    <svg width="24px" height="34px" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg"
+                         role="presentation">
+                        <polygon fill="#000000" points="24 0 0 0 0 32 12.2436611 26.2926049 24 31.7728343"></polygon>
+                        <polygon points="24 0 0 0 0 32 12.2436611 26.2926049 24 31.7728343"></polygon>
+                        <polygon
+                                points="24 31.7728343 24 33.7728343 12.2436611 28.2926049 0 34 0 32 12.2436611 26.2926049"></polygon>
+                    </svg>
+                    <div class="watchlist-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24" fill="currentColor"
+                             role="presentation">
+                            <path fill="none" d="M0 0h24v24H0V0z"></path>
+                            <path d="M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <img class="card-img-top"
+                     th:src="*{thumbnail}"
+                     alt="image" height="275px">
+                <div class="rating-div">
+                <span class="rating-stars" th:inline="text">
+                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" color="gold" viewBox="0 0 24 24"
+                         fill="currentColor" role="presentation"><path
+                            d="M12 20.1l5.82 3.682c1.066.675 2.37-.322 2.09-1.584l-1.543-6.926 5.146-4.667c.94-.85.435-2.465-.799-2.567l-6.773-.602L13.29.89a1.38 1.38 0 0 0-2.581 0l-2.65 6.53-6.774.602C.052 8.126-.453 9.74.486 10.59l5.147 4.666-1.542 6.926c-.28 1.262 1.023 2.26 2.09 1.585L12 20.099z"></path></svg>
+                    [[*{rate}]]
+                </span>
+                    <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#rating-modal">Rate
+                    </button>
+                </div>
+                <div class="card-body" style="padding: 1rem;">
+                    <h5 class="card-title">
+                        <a th:href="@{/movies/{id}(id=*{id})}" style="color: #1f1f1f" th:text="*{title}">Card</a>
+                    </h5>
+                    <div class="movie-card">
+                        <form th:action="${movie.isWatchListed()} ? '/watchlists/remove' : '/watchlists/add'" method="post">
+                            <input type="hidden" name="movieId" th:value="*{id}"/>
+                            <th:block sec:authorize="isAuthenticated()">
+                                <input type="hidden" name="userId" th:value="${#authentication.getPrincipal().id}"/>
+                            </th:block>
+
+                            <button th:unless="*{isWatchListed()}" type="submit" class="btn btn-sm btn-block btn-outline-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="currentColor" role="presentation">
+                                    <path fill="none" d="M0 0h24v24H0V0z"></path>
+                                    <path d="M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z"></path>
+                                </svg>
+                                WatchList
+                            </button>
+
+                            <button th:if="*{isWatchListed()}" type="submit" class="btn btn-sm btn-block btn-outline-success">
+                                <i class="fas fa-check"></i>
+                                &nbsp;WatchListed
+                            </button>
+                        </form>
+                    </div>
+                    <div class="trailer">
+                        <a th:href="*{trailer}" target="_blank" type="button"
+                           class="btn btn-sm btn-outline-primary movie-trailer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="feather feather-play">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Trailer
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-secondary movie-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="feather feather-info">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="8"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="rating-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <table class="main-wrapper"
+                           style="border-collapse: collapse;border-spacing: 0;display: table;table-layout: fixed; margin: 0 auto; -webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-rendering: optimizeLegibility;background-color: #f5f5f5; width: 100%;">
+                        <tbody>
+                        <tr>
+                            <td style="padding: 0;vertical-align: top; width: 100%;" class="">
+                                <center>
+                                    <table class="main-content"
+                                           style="width: 100%; max-width: 600px; border-collapse: separate;border-spacing: 0;margin-left: auto;margin-right: auto; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; background-color: #ffffff; overflow: hidden;"
+                                           width="600">
+                                        <tbody>
+                                        <tr>
+                                            <td style="padding: 0;vertical-align: top;">
+                                                <table class="main-content"
+                                                       style="border-collapse: collapse;border-spacing: 0;margin-left: auto;margin-right: auto;width: 100%; max-width: 600px;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style="padding: 0;vertical-align: top;text-align: left">
+                                                            <table class="contents"
+                                                                   style="border-collapse: collapse;border-spacing: 0;width: 100%;">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td class="content-padding"
+                                                                        style="padding: 0;vertical-align: top">
+                                                                        <div style="position: absolute; top: -3em; left: 50%">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                 width="85" height="81"
+                                                                                 viewBox="0 0 85 81" fill="gold"
+                                                                                 role="presentation">
+                                                                                <path d="M29.4278383,26.4913549 L2.77970363,28.6432143 L2.63541119,28.6580541 C0.066865676,28.979767 -0.941953299,32.2222005 1.05754936,33.9345403 L21.3502824,51.3123553 L15.1650027,77.2797478 L15.1355051,77.4163845 C14.6437005,79.9569202 17.4230421,81.9201545 19.6736611,80.5499671 L42.5,66.6529451 L65.3263389,80.5499671 L65.447392,80.6201968 C67.7156822,81.8722123 70.4448402,79.8400226 69.8349973,77.2797478 L63.6489629,51.3123553 L83.9424506,33.9345403 L84.0504483,33.8378644 C85.9390285,32.0703808 84.8461128,28.855226 82.2202964,28.6432143 L55.571407,26.4913549 L45.2865041,1.85440279 C44.2543406,-0.618134262 40.7456594,-0.618134262 39.7134959,1.85440279 L29.4278383,26.4913549 Z"></path>
+                                                                            </svg>
+                                                                        </div>
+                                                                        <pre>
+
+                                                                </pre>
+                                                                        <div class="body-copy" style="margin: 0;">
+
+                                                                            <div
+                                                                                    style="margin: 0;color: #60666d;font-size: 50px;font-family: sans-serif;line-height: 20px; text-align: left;">
+                                                                                <div class="bottom-padding"
+                                                                                     style="margin-bottom: 0px; line-height: 15px; font-size: 15px;">
+                                                                                    &nbsp;
+                                                                                </div>
+                                                                                <div
+                                                                                        style="text-align: center; margin: 0; font-size: 10px;  text-transform: uppercase; letter-spacing: .5px;">
+                                                                                    Rating (select a star amount):
+                                                                                </div>
+                                                                                <div class="bottom-padding"
+                                                                                     style="margin-bottom: 0px; line-height: 7px; font-size: 7px;">
+                                                                                    &nbsp;
+                                                                                </div>
+                                                                                <div
+                                                                                        style="width: 100%; text-align: center; float: left;">
+                                                                                    <div class="rating"
+                                                                                         style="text-align: center; margin: 0; font-size: 50px; margin: 0 auto; margin-top: 10px;">
+
+                                                                                        <table
+                                                                                                style="border-collapse: collapse;border-spacing: 0;width: 275px; margin: 0 auto; font-size: 50px; direction: rtl;"
+                                                                                                dir="rtl">
+                                                                                            <tbody>
+                                                                                            <tr>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">
+                                                                                                            10
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">
+                                                                                                            9
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">
+                                                                                                            8
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">
+                                                                                                            7
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">
+                                                                                                            6
+                                                                                                        </a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top;"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="1">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=5"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">5</a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=4"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="2">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=4"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">4</a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=3"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="3">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=3"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">3</a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=2"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="4">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=2"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">2</a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td style="padding: 0;vertical-align: top"
+                                                                                                    width="55"
+                                                                                                    class="star-wrapper"
+                                                                                                    lang="x-star-wrapper">
+                                                                                                    <div
+                                                                                                            style="display: block; text-align: center; float: left;width: 55px;overflow: hidden;line-height: 60px;">
+                                                                                                        <a href="http://example.com/?rating=1"
+                                                                                                           class="star"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-divbox"
+                                                                                                           style="color: #FFCC00; text-decoration: none; display: inline-block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;"
+                                                                                                           tabindex="5">
+                                                                                                            <div lang="x-empty-star"
+                                                                                                                 style="margin: 0;display: inline-block;">
+                                                                                                                ☆
+                                                                                                            </div>
+                                                                                                            <div lang="x-full-star"
+                                                                                                                 style="margin: 0;display: inline-block; width:0; overflow:hidden;float:left; display:none; height: 0; max-height: 0;">
+                                                                                                                ★
+                                                                                                            </div>
+                                                                                                        </a>
+                                                                                                        <a href="http://example.com/?rating=1"
+                                                                                                           class="star-number"
+                                                                                                           target="_blank"
+                                                                                                           lang="x-star-number"
+                                                                                                           style="font-family: sans-serif;color: #AEAEAE; font-size: 14px; line-height: 14px; text-decoration: none; display: block;height: 50px;width: 55px;overflow: hidden;line-height: 60px;border-bottom: 3px solid #FFFFFF; text-align: center;">1</a>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div
+                                                                                        style="margin-bottom: 0px; line-height: 30px; font-size: 30px;">
+                                                                                    &nbsp;
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </center>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="" th:src="@{~/js/owl.carousel.min.js}"></script>
+    <script>
+        $(document).ready(function () {
+
+            var owl = $('.owl-carousel');
+            owl.owlCarousel({
+                items: 5,
+                loop: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 2500,
+                autoplayHoverPause: true
+            });
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <th:block th:fragment="title (title)">
+        <title th:text="${title}"></title>
+    </th:block>
+
+    <link rel="stylesheet" href="" th:href="@{~/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="" th:href="@{~/css/fontawesome.min.css}"/>
+</head>
+<body style="background-color: #f2f2f2">
+
+<th:block th:fragment="app-navbar (want)">
+    <th:block th:if="${want == 'true'}">
+        <th:block th:replace="fragments/navbar :: navbar"></th:block>
+    </th:block>
+</th:block>
+
+<div layout:fragment="content"></div>
+
+<script src="" th:src="@{~/js/jquery.min.js}"></script>
+<script src="" th:src="@{~/js/bootstrap.min.js}"></script>
+<script src="" th:src="@{~/js/fontawesome.min.js}"></script>
+
+<th:block layout:fragment="script">
+
+</th:block>
+</body>
+</html>

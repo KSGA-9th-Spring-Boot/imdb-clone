@@ -1,0 +1,59 @@
+.owl-item {
+    width: 185px;
+    margin-right: 10px;
+}
+
+.item {
+    width: 185px;
+    margin-right: 10px;
+}
+
+.watchlist {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.watchlist:hover {
+    opacity: 0.6;
+}
+
+.watchlist-button {
+    position: absolute;
+    top: .1em;
+    color: white;
+}
+
+.movie-card {
+    margin: 10% 0;
+}
+.trailer {
+    text-align: center;
+}
+
+.rating-div {
+    padding: 0 1.25em;
+    margin-top: 1em;
+}
+
+.rating-stars {
+    padding-right: 1.25em;
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.rating-stars svg {
+    width: 1.15em;
+    height: 0.88em;
+    margin-right: 0.15em;
+}
+
+.movie-trailer {
+
+}
+
+.movie-detail {
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+}
