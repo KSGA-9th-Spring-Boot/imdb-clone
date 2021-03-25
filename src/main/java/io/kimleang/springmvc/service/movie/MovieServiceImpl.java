@@ -20,6 +20,12 @@ public class MovieServiceImpl implements MovieService {
     private MovieMapper movieMapper;
 
     @Override
+    public boolean save(MovieDto movieDto) {
+        Movie movie = movieMapper.movieDtoToMovie(movieDto);
+        return movieRepository.save(movie);
+    }
+
+    @Override
     public MovieDto findMovieById(Integer id) throws IdNotFoundException {
         Movie movie = movieRepository
                 .findMovieById(id)

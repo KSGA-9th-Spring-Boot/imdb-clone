@@ -37,7 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/files/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -91,7 +91,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers(
-                        "/resources/**", "/static/**", "/bootstrap/**", "/css/**", "/js/**", "/images/**",
+                        "/resources/**", "/files/**", "/static/**", "/bootstrap/**", "/css/**", "/js/**", "/images/**",
                         "/resources/static/**", "/css/**", "/js/**", "/img/**", "/fonts/**",
                         "/images/**", "/scss/**", "/vendor/**", "/favicon.ico", "/auth/**", "/favicon.png",
                         "/v2/api-docs", "/configuration/ui", "/configuration/security",

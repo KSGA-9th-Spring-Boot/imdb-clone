@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/app}">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="~{layouts/app :: title ('Add Movie')}"></title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/croppie.css}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+</head>
+<body style="background-color: #f2f2f2">
+<div layout:fragment="content">
+    <th:block th:replace="layouts/app :: app-navbar ('true')"></th:block>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <form method="post" th:action="@{/movies/add}" th:object="${movie}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input th:field="*{title}" type="text" class="form-control" id="title"
+                               placeholder="Enter title">
+                        <small class="form-text text-danger">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Enter description</label>
+                        <textarea th:field="*{description}" class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="runtime">Runtime</label>
+                        <input id="runtime" class="form-control" type="text"
+                               th:field="*{runtime}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="release-date">Release Date</label>
+                        <input id="release-date" class="form-control" type="text"
+                               th:field="*{releasedDate}" name="releasedDate" readonly/>
+                    </div>
+                    <div class="form-group">
+                        <label for="trailer">Trailer (Link from youtube)</label>
+                        <input th:field="*{trailer}" id="trailer" class="form-control" type="text" name="trailer"/>
+                    </div>
+                    <div class="custom-file">
+                        <input type="hidden" th:field="*{thumbnail}" id="thumbnail">
+                        <input type="file" name="file" class="custom-file-input" id="file" accept="image/*">
+                        <label class="custom-file-label" for="file">Choose file</label>
+                    </div>
+                    <div class="form-group">
+                        <br>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <h2>Youtube Link</h2>
+                    <iframe id="youtube" width="100%" height="315"
+                            src="https://www.youtube.com/embed/ShcR4Zfc6Dw"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <br>
+                <div class="row">
+                    <h2>Thumbnail Preview</h2>
+                    <img id="preview" width="100%" th:src="@{/assets/placeholder.jpg}" alt="thumbnail preview">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="uploadimageModal">
+        <div class="modal-dialog" role="document" style="min-width: 700px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <div id="image_demo"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary crop_image">Crop and Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script type="text/javascript" th:src="@{/js/croppie.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var image_crop = $('#image_demo').croppie({
+                viewport: {
+                    width: 183,
+                    height: 275,
+                    type:'rectangle' //circle
+                },
+                boundary:{
+                    width: 650,
+                    height: 350
+                }
+            });
+            $('#file').on('change', function(){
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    image_crop.croppie('bind', {
+                        url: event.target.result,
+                    });
+                }
+                reader.readAsDataURL(this.files[0]);
+                $('#uploadimageModal').modal('show');
+            });
+
+            $('.crop_image').click(function(event){
+                image_crop.croppie('result', {type: 'blob', format: 'png'}).then(function(blob) {
+                    const imageUrl = URL.createObjectURL(blob);
+                    const img = document.getElementById("preview")
+                    img.addEventListener('load', () => URL.revokeObjectURL(imageUrl));
+                    document.getElementById("preview").src = imageUrl;
+
+                    var form = new FormData();
+                    form.append("file", blob, document.getElementById('file').files[0].name);
+
+                    var settings = {
+                        "url": "/files/upload",
+                        "method": "POST",
+                        "timeout": 0,
+                        "processData": false,
+                        "mimeType": "multipart/form-data",
+                        "contentType": false,
+                        "data": form
+                    };
+
+                    $.ajax(settings).done(function (response) {
+                        document.getElementById("thumbnail").value = response
+                    }).fail((e) => {
+                        console.log(e)
+                    });
+                });
+                $('#uploadimageModal').modal('hide');
+            });
+
+            $('input[name="releasedDate"]').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minYear: 1901,
+                maxYear: parseInt(moment().format('YYYY'), 10)
+            }, function (start, end, label) {
+                const value = moment(start).format('L')
+                $('input[name="releasedDate"]').val(value)
+            })
+
+            $("#trailer").change(function () {
+                $('#youtube').attr('src', $(this).val())
+            })
+        })
+    </script>
+</th:block>
+</body>
+</html>

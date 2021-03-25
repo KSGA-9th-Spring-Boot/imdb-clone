@@ -1,6 +1,7 @@
 package io.kimleang.springmvc.dto.mapper;
 
 import io.kimleang.springmvc.dto.model.MovieDto;
+import io.kimleang.springmvc.dto.request.MovieRequest;
 import io.kimleang.springmvc.model.Movie;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,12 +16,14 @@ public interface MovieMapper {
     @Mapping(source = "rate", target = "rate")
     MovieDto movieToMovieDto(Movie movie);
 
-    @Mapping(source = "rate", target = "rate")
     Movie movieDtoToMovie(MovieDto movieDto);
 
     List<Movie> movieDtosToMovies(List<MovieDto> movieDtos);
     @Mapping(source = "rate", target = "rate")
     List<MovieDto> moviesToMovieDtos(List<Movie> movies);
+
+
+    MovieDto movieRequestToMovieDto(MovieRequest movieRequest);
 
     static int splitYearFromDate(Date date) {
         try {

@@ -1,7 +1,6 @@
 package io.kimleang.springmvc.repository;
 
 import io.kimleang.springmvc.model.Movie;
-import io.kimleang.springmvc.model.genre.Genre;
 import io.kimleang.springmvc.repository.provider.MovieProvider;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,8 +15,8 @@ import java.util.Optional;
 
 @Mapper
 public interface MovieRepository {
-    @Insert("INSERT INTO movies (title, description, released_date, trailer, runtime, number_votes) " +
-            "VALUES (#{movie.title}, #{movie.description}, #{movie.releasedDate}, #{movie.trailer}, #{movie.runtime}, #{movie.numberVotes})")
+    @Insert("INSERT INTO movies (title, description, released_date, trailer, runtime, thumbnail) " +
+            "VALUES (#{title}, #{description}, #{releasedDate}, #{trailer}, #{runtime}, #{thumbnail})")
     boolean save(Movie movie);
 
     @Select("SELECT m.*, ROUND(AVG(r.rate), 1) rate, COUNT(r.id) reviewers FROM movies m LEFT JOIN ratings r ON m.id = r.movie_id WHERE m.id = #{id} GROUP BY m.id")

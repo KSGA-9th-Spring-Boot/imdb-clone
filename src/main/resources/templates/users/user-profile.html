@@ -53,8 +53,8 @@
             <div class="col-lg-8">
                 <h3>User's WatchLists</h3>
                 <hr>
-                <div class="" th:each="watchList : ${watchLists}" th:object="${watchList.getMovieDto()}">
-                    <div class="item card" style="width: 185px;">
+                <div class="card-columns">
+                    <div class="card" style="width: auto;" th:each="watchList : ${watchLists}" th:object="${watchList.getMovieDto()}">
                         <div class="watchlist">
                             <svg width="24px" height="34px" viewBox="0 0 24 34" xmlns="http://www.w3.org/2000/svg"
                                  role="presentation">
@@ -74,7 +74,7 @@
                         </div>
                         <img class="card-img-top"
                              src="https://m.media-amazon.com/images/M/MV5BN2Q5MThlZTgtMWMyMi00NDIwLWE1NTMtNzFlOGRmM2QxMGY0XkEyXkFqcGdeQXVyNzc5MjA3OA@@._V1_QL75_UX280_CR0,14,280,414_.jpg"
-                             alt="image" height="275px">
+                             alt="image" height="auto">
                         <div class="card-body" style="padding: 1rem;">
                             <h5 class="card-title">
                                 <a href="#" style="color: #1f1f1f" th:text="*{title}">Card</a>
