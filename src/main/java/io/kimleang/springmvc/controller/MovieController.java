@@ -5,6 +5,7 @@ import io.kimleang.springmvc.dto.model.MovieDto;
 import io.kimleang.springmvc.dto.model.UserDto;
 import io.kimleang.springmvc.dto.model.WatchListDto;
 import io.kimleang.springmvc.dto.request.MovieRequest;
+import io.kimleang.springmvc.dto.response.StatusResponse;
 import io.kimleang.springmvc.exception.IdNotFoundException;
 import io.kimleang.springmvc.service.FileStorageService;
 import io.kimleang.springmvc.service.auth.UserDetailsImpl;
@@ -22,9 +23,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -46,7 +51,9 @@ public class MovieController {
     private MovieMapper movieMapper;
 
     @GetMapping({"/", "/movies"})
-    public String findAllMovies(Model model, @CurrentUser UserDetailsImpl userDetails) throws IdNotFoundException {
+    public String findAllMovies(Model model,
+                                @CurrentUser UserDetailsImpl userDetails) throws IdNotFoundException {
+//        StatusResponse status = (StatusResponse) model.asMap().get("status");
         List<MovieDto> movieDtos = movieService.findAllMovies();
 
         if (userDetails != null) {
@@ -62,6 +69,7 @@ public class MovieController {
             }).collect(Collectors.toList());
         }
 
+        model.addAttribute("status", model.asMap().get("status"));
         model.addAttribute("movies", movieDtos);
 
         return "index";

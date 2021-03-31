@@ -30,7 +30,8 @@ public class WatchListController {
     private WatchListService  watchListService;
 
     @PostMapping("/add")
-    public String addToWatchLists(@ModelAttribute WatchListRequest watchListRequest, @CurrentUser UserDetailsImpl userDetails) throws IdNotFoundException {
+    public String addToWatchLists(@ModelAttribute WatchListRequest watchListRequest,
+                                  @CurrentUser UserDetailsImpl userDetails) throws IdNotFoundException {
         try {
             System.out.println(watchListRequest);
             MovieDto movieDto = movieService.findMovieById(watchListRequest.getMovieId());

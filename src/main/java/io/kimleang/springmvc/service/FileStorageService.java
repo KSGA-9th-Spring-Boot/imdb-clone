@@ -44,6 +44,10 @@ public class FileStorageService {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
 
+            String[] fileParts = fileName.split("\\.");
+            String extension = fileParts[1];
+            fileName = fileParts[0] + "." + extension;
+
             // Copy file to the target location (Replacing existing file with the same name)
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
