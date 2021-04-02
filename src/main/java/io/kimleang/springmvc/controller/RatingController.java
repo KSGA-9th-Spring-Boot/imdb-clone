@@ -50,11 +50,8 @@ public class RatingController {
                     .setReviewerDto(reviewerDto)
                     .setRate(ratingRequest.getRate());
             boolean saved = ratingService.rate(ratingDto);
-
             StatusResponse statusResponse = new StatusResponse(saved, "You rated successfully.");
-
             redirectAttributes.addFlashAttribute("status", statusResponse);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
